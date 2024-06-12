@@ -44,3 +44,34 @@ class Article:
         else:
             raise TypeError("Magazine must be an instance of Magazine")  # Raise error if magazine is not of type Magazine
 
+# Definition of the class Author
+class Author:
+    def __init__(self, name):
+        self._name = None  # Initialize name attribute
+        self.name = name  # Use the setter to validate the name
+
+    @property
+    def name(self):
+        return self._name  # Getter method for the name attribute
+
+    @name.setter
+    def name(self, new_name):
+        if self._name is not None:  # Check if name has already been set
+            AttributeError("Name cannot be changed")  # Raise error if trying to change name
+        if isinstance(new_name, str) and len(new_name) > 0:
+            self._name = new_name  # Set name if it's a non-empty string
+        else:
+            ValueError("Name must be a non-empty string")  # Raise error for invalid name
+
+    def articles(self):
+        return [article for article in Article.all if self == article.author]  # Get the articles written by this author
+
+    def magazines(self):
+        return list({article.magazine for article in self.articles()})  # Get the list of magazines the author has written for
+
+    def add_article(self, magazine, title):
+        return Article(self, magazine, title)  # Add a new article written by this author to the list of articles
+
+    def topic_areas(self):
+        areas = list({magazine.category for magazine in self.magazines()})  # Get the topic areas based on the magazines the author has written for
+        return areas if areas else None  # Return None if no topic areas
