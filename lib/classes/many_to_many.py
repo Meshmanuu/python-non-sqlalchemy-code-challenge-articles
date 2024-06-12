@@ -75,3 +75,48 @@ class Author:
     def topic_areas(self):
         areas = list({magazine.category for magazine in self.magazines()})  # Get the topic areas based on the magazines the author has written for
         return areas if areas else None  # Return None if no topic areas
+# Definition of the class Magazine
+class Magazine:
+    def __init__(self, name, category):
+        self._name = None  # Initialize name attribute
+        self._category = None  # Initialize category attribute
+        self.name = name  # Use the setter to validate the name
+        self.category = category  # Use the setter to validate the category
+
+    @property
+    def name(self):
+        return self._name  # Getter method for the name attribute
+
+    @name.setter
+    def name(self, new_name):
+        if isinstance(new_name, str) and 2 <= len(new_name) <= 16:
+            self._name = new_name  # Set name if it's a string between 2 and 16 characters
+        else:
+            ValueError("Name must be a string between 2 and 16 characters")  # Raise an error for invalid input
+
+    @property
+    def category(self):
+        return self._category  # Getter method for the category attribute
+
+    @category.setter
+    def category(self, new_category):
+        if isinstance(new_category, str) and len(new_category) > 0:
+            self._category = new_category  # Set category if it's a non-empty string
+        else:
+            ValueError("Category must be a non-empty string")  # Raise an error for invalid input
+
+    def articles(self):
+        return [article for article in Article.all if self == article.magazine]  # Get the articles associated with this magazine
+
+    def contributors(self):
+        return list({article.author for article in self.articles()})  # Get the list of contributors for this magazine
+
+    def article_titles(self):
+        titles = [article.title for article in self.articles()]  # Get the titles of the articles associated with this magazine
+        return titles if titles else None  # Return None if no articles
+
+    def contributing_authors(self):
+        author_counts = {}
+        for article in self.articles():
+            author_counts[article.author] = author_counts.get(article.author, 0) + 1
+        return [author for author, count in author_counts.items() if count >= 2] or None  # Get the authors who have contributed multiple articles to this magazine
